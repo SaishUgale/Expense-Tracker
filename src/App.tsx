@@ -26,16 +26,17 @@ const loadFromStorage = (key: string, defaultValue: any) => {
   }
 };
 
-export default function App() {
+const App = () => {
   const [expenses, setExpenses] = useState<Expense[]>(() => 
     loadFromStorage('expenses', [])
   );
   const [users, setUsers] = useState<User[]>(() => 
     loadFromStorage('users', [])
   );
-  const [selectedCurrency, setSelectedCurrency] = useState(() => 
-    loadFromStorage('currency', currencies[0].code)
-  );
+  const [selectedCurrency, setSelectedCurrency] = useState(() => {
+    // Load the selected currency from local storage
+    return localStorage.getItem('selectedCurrency') || 'USD';
+  });
   const [budgets, setBudgets] = useState<Budget[]>(() => 
     loadFromStorage('budgets', [])
   );
@@ -55,7 +56,8 @@ export default function App() {
   }, [users]);
 
   useEffect(() => {
-    localStorage.setItem('currency', selectedCurrency);
+    // Save the selected currency to local storage whenever it changes
+    localStorage.setItem('selectedCurrency', selectedCurrency);
     // Update all expenses and budgets when currency changes
     setExpenses(prev => prev.map(expense => ({ ...expense, currency: selectedCurrency })));
     setBudgets(prev => prev.map(budget => ({ ...budget, currency: selectedCurrency })));
@@ -360,5 +362,7 @@ export default function App() {
       />
     </div>
   );
-}
+};
+
+export default App;
 
